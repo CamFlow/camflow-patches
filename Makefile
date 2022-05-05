@@ -31,6 +31,8 @@ config:
 	cd ~/build/linux-stable && sed -i -e "s/CONFIG_LSM=\"lockdown,yama,integrity,selinux,bpf,landlock\"/CONFIG_LSM=\"lockdown,yama,integrity,selinux,bpf,landlock,provenance\"/g" .config
 	cd ~/build/linux-stable && sed -i -e "s/CONFIG_DEBUG_INFO=n/CONFIG_DEBUG_INFO=y/g" .config
 	cd ~/build/linux-stable && sed -i -e "s/CONFIG_DEBUG_INFO_BTF=n/CONFIG_DEBUG_INFO_BTF=y/g" .config
+	cd ~/build/linux-stable && sed -i -e "s/CONFIG_SYSTEM_TRUSTED_KEYS=\"debian\/canonical-certs.pem\"/CONFIG_SYSTEM_TRUSTED_KEYS=\"\"/g" .config
+	cd ~/build/linux-stable && sed -i -e "s/CONFIG_SYSTEM_REVOCATION_KEYS=\"debian\/canonical-revoked-certs.pem\"/CONFIG_SYSTEM_REVOCATION_KEYS=\"\"/g" .config
 
 config_small:
 	test -f /boot/config-$(shell uname -r) && $(MAKE) config_def || $(MAKE) config_pi

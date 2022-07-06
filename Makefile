@@ -16,12 +16,16 @@ prepare:
 config_def:
 	echo "Default method to retrieve configuration"
 	cd ~/build/linux-stable && cp -f /boot/config-$(shell uname -r) .config
+	cd ~/build/linux-stable && scripts/config --disable SYSTEM_TRUSTED_KEYS
+	cd ~/build/linux-stable && scripts/config --disable SYSTEM_REVOCATION_KEYS
 
 config_pi:
 	echo "Pi method to retrieve configuration"
 	sudo modprobe configs
 	zcat /proc/config.gz > /tmp/config.new
 	cd ~/build/linux-stable && cp -f /tmp/config.new .config
+	cd ~/build/linux-stable && scripts/config --disable SYSTEM_TRUSTED_KEYS
+	cd ~/build/linux-stable && scripts/config --disable SYSTEM_REVOCATION_KEYS
 
 config:
 	test -f /boot/config-$(shell uname -r) && $(MAKE) config_def || $(MAKE) config_pi

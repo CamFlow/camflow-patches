@@ -2,6 +2,7 @@ kernel-version=6.0.5
 lsm-version=0.9.0
 fedora-version=36
 arch=x86_64
+OS=$(shell awk '/DISTRIB_ID=/' /etc/*-release | sed 's/DISTRIB_ID=//' | tr '[:upper:]' '[:lower:]')
 
 prepare:
 	mkdir -p ~/build
@@ -14,12 +15,20 @@ prepare:
 config_def:
 	echo "Default method to retrieve configuration"
 	cd ~/build/linux-stable && cp -f /boot/config-$(shell uname -r) .config
+ifeq ($(OS),ubuntu)
+	cd ~/build/linux-stable && scripts/config --disable SYSTEM_TRUSTED_KEYS
+	cd ~/build/linux-stable && scripts/config --disable SYSTEM_REVOCATION_KEYS
+endif
 
 config_pi:
 	echo "Pi method to retrieve configuration"
 	sudo modprobe configs
 	zcat /proc/config.gz > /tmp/config.new
 	cd ~/build/linux-stable && cp -f /tmp/config.new .config
+ifeq ($(OS), ubuntu)
+	cd ~/build/linux-stable && scripts/config --disable SYSTEM_TRUSTED_KEYS
+	cd ~/build/linux-stable && scripts/config --disable SYSTEM_REVOCATION_KEYS
+endif
 
 config:
 	test -f /boot/config-$(shell uname -r) && $(MAKE) config_def || $(MAKE) config_pi
